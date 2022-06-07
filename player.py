@@ -1,14 +1,25 @@
+from email.mime import image
 import pygame
 from settings import floor, screen_width
+from support import import_folder
 
 class Player(pygame.sprite.Sprite):
     '''Sprite class of the player'''
     def __init__(self):
         super().__init__()
+        self.import_character_assets()
+        
         # Character sprite
-        self.image = pygame.Surface((40, 60))
-        self.image.fill("blue")
+        self.frame_index = 0
+        self.animation_speed = 0.15
+        self.image = self.animations["Run"][0]
         self.rect = self.image.get_rect(midbottom=(screen_width/2, floor))
+        
+            # --- trying stuff
+        self.image.scroll(-15, -45) # !!! artefacts, why?
+        self.rect.width = 60
+        self.rect.height = 70
+        
         self.group = pygame.sprite.GroupSingle()
         self.group.add(self)
 
@@ -29,6 +40,19 @@ class Player(pygame.sprite.Sprite):
         self.can_attack = True
         self.attacking_timer = pygame.USEREVENT + 1
         self.attack_delay_timer = pygame.USEREVENT + 2
+        self.status = "Idle"
+        
+    def import_character_assets(self):
+        character_path = "graphics/Knight/"
+        self.animations = {
+            "Attack": [],
+            "Run": [],
+            "Run_Attack": [],
+            "Idle": [],
+        }
+        for animation in self.animations.keys():
+            full_path  = character_path + animation
+            self.animations[animation] = import_folder(full_path)
 
     def apply_gravity(self):
         '''Applies gravity to the player'''
@@ -84,9 +108,9 @@ class HitSprite(pygame.sprite.Sprite):
         '''Place hit box according to player direction and if player is attacking'''
         if player.is_attacking:
             if player.is_going_right:
-                self.rect.topleft = player.rect.topright
+                self.rect.bottomleft = player.rect.bottomright
             else:
-                self.rect.topright = player.rect.topleft
+                self.rect.bottomright = player.rect.bottomleft
         else:
             self.rect.bottomright = (0,0)
 
