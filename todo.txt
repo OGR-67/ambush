@@ -1,2 +1,6 @@
-animation
-gameover screen
+Intro and gameover screen
+increase difficulty with time
+display and store score
+run attack animation
+mobs graphics and animation
+better spawn logic (speed acording to mob type)

@@ -3,6 +3,7 @@ import pygame
 from settings import screen_width, floor
 from random import randint, choice
 
+
 mob_group = pygame.sprite.Group()
 
 class Mob(pygame.sprite.Sprite):
