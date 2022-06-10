@@ -1,6 +1,25 @@
-Intro and gameover screen
-increase difficulty with time
-display and store score
-run attack animation
-mobs graphics and animation
-better spawn logic (speed acording to mob type)
+
+
+## health logic for character and mobs
+    # Character 3hp
+
+## Refactor
+    # Game_over to class
+
+## Better Intro and gameover screen
+    # A kind of lore like "You were ambushed! Survive as long as you can!!!"
+    # background
+    # better instructions:
+        - Multiline
+        - Controls
+        - Press Return to start or try again when game's over
+
+## run attack animation, check for skiped or double frame
+
+## Death animation for mobs
+
+## Death animation for player
+
+## Super attack
+    # Charges with kills
+    # With shockwave
