@@ -12,7 +12,7 @@ class Settings:
         self.game_active = False
         self.game_started = False
 
-        self.max_difficulty = 200
+        self.max_difficulty = 500
         self.start_difficulty = 2000
         self.difficulty = self.start_difficulty
         self.score = 0

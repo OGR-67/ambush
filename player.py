@@ -4,7 +4,7 @@ from settings import settings
 from score import score
 from support import import_folder
 from super import SuperAttack
-from mob import mob_group, mob_hitbox_group
+from mob import mob_hitbox_group
 
 
 class Player(pygame.sprite.Sprite):
@@ -52,12 +52,18 @@ class Player(pygame.sprite.Sprite):
         self.charge_border_rect = pygame.Rect(50,50,200, 15)
         self.super_group = pygame.sprite.Group()
 
+        # invulnerablity frame
+        self.invulnerability_timer = pygame.USEREVENT + 4
+        self.invulnerability_duration = 2000
+        self.is_invulnerable = False
+        
         # Utility
         self.gravity = 0.8
         self.direction = pygame.Vector2(0,0)
         self.is_moving = False
         self.is_going_right = True
         self.status = "Stand"
+    
     
     def charge_super_attack(self):
         self.super_attack_charge += self.super_charge_speed
@@ -133,7 +139,7 @@ class Player(pygame.sprite.Sprite):
         self.hitbox_sprite.rect.y += self.direction.y
         if self.hitbox_sprite.rect.bottom >= settings.floor:
             self.hitbox_sprite.rect.bottom = settings.floor
-
+    
     def user_inputs(self):
         '''Checks user's inputs and acts in consequence'''
         self.is_moving = False
@@ -164,6 +170,8 @@ class Player(pygame.sprite.Sprite):
                 self.super_attack_charge = 0
                 self.can_super_attack = False
                 self.is_super_attacking = True
+                self.is_invulnerable = True
+                pygame.time.set_timer(self.invulnerability_timer, self.invulnerability_duration)
             
     def draw_super_attack_charge(self, screen):
         self.charge_rect.width = self.super_attack_charge * 2
