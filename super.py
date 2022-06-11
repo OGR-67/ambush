@@ -10,7 +10,7 @@ class ChargedChar(pygame.sprite.Sprite):
        self.frames = self.import_sprite_assets()
        self.image = self.frames[self.frame_index]
        self.rect = self.image.get_rect(center=self.player.rect.center)
-       self.animation_speed = 0.40 
+       self.animation_speed = 0.20 
        
     def import_sprite_assets(self):
         path = "graphics/Charged"
