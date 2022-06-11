@@ -2,6 +2,57 @@ import pygame
 from support import import_folder
 from os import walk
 
+class ChargedChar(pygame.sprite.Sprite):
+    def __init__(self, player):
+       super().__init__()
+       self.player = player
+       self.frame_index = 0
+       self.frames = self.import_sprite_assets()
+       self.image = self.frames[self.frame_index]
+       self.rect = self.image.get_rect(center=self.player.rect.center)
+       self.animation_speed = 0.40 
+       
+    def import_sprite_assets(self):
+        path = "graphics/Charged"
+        return import_folder(path, "Charged")
+    
+    def animate(self):
+        self.frame_index += self.animation_speed
+        if self.frame_index >= len(self.frames):
+            self.frame_index = 0
+        self.image = self.frames[int(self.frame_index)]
+    
+    def stick_to_char(self):
+        self.rect = self.image.get_rect(center=self.player.rect.center)
+    
+    def update(self):
+        self.animate()
+        self.stick_to_char()
+
+
+class ChargedBar(pygame.sprite.Sprite):
+    def __init__(self, charge_bar):
+       super().__init__()
+       self.charge_bar = charge_bar
+       self.frame_index = 0
+       self.frames = self.import_sprite_assets()
+       self.image = self.frames[self.frame_index]
+       self.rect = self.image.get_rect(center=self.charge_bar.center)
+       self.animation_speed = 0.6
+       
+    def import_sprite_assets(self):
+        path = "graphics/Charged_bar"
+        return import_folder(path, "Charged_bar")
+    
+    def animate(self):
+        self.frame_index += self.animation_speed
+        if self.frame_index >= len(self.frames):
+            self.frame_index = 0
+        self.image = self.frames[int(self.frame_index)]
+    
+    def update(self):
+        self.animate()
+
 
 class SuperAttack(pygame.sprite.Sprite):
     def __init__(self, is_going_right, player_bottomleft, player_bottomright):
@@ -52,3 +103,4 @@ class SuperAttack(pygame.sprite.Sprite):
         if not self.is_over:
             self.move()
             self.animate()
+

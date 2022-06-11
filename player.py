@@ -3,7 +3,7 @@ import pygame
 from settings import settings
 from score import score
 from support import import_folder
-from super import SuperAttack
+from super import SuperAttack, ChargedChar, ChargedBar
 from mob import mob_hitbox_group
 from shield import Shield
 
@@ -33,6 +33,7 @@ class Player(pygame.sprite.Sprite):
         # Attribute
         self.speed = 4
         self.jump_speed = -16
+        self.hp = 3
         
         # Attack
         self.attacking_timer = pygame.USEREVENT + 1
@@ -52,6 +53,9 @@ class Player(pygame.sprite.Sprite):
         self.charge_rect = pygame.Rect(50,50,self.super_attack_charge, 15)
         self.charge_border_rect = pygame.Rect(50,50,200, 15)
         self.super_group = pygame.sprite.Group()
+        self.charged_char = ChargedChar(self.hitbox_sprite)
+        self.charged_bar = ChargedBar(self.charge_border_rect)
+        self.charged_group = pygame.sprite.Group()
 
         # invulnerablity frame
         self.invulnerability_timer = pygame.USEREVENT + 4
@@ -67,7 +71,6 @@ class Player(pygame.sprite.Sprite):
         self.is_going_right = True
         self.status = "Stand"
     
-    
     def charge_super_attack(self):
         self.super_attack_charge += self.super_charge_speed
         
@@ -75,6 +78,7 @@ class Player(pygame.sprite.Sprite):
         if self.super_attack_charge >= self.super_max_charge:
             self.super_attack_charge = self.super_max_charge
             self.can_super_attack = True
+            self.charged_group.add([self.charged_char, self.charged_bar])
             
     def super_shockwave(self):
         if self.super_atack_shockwave:
@@ -171,6 +175,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_LSHIFT]:
             if self.can_super_attack and self.hitbox_sprite.rect.bottom == settings.floor:
                 self.shield.add(self.shield_sprite)
+                self.charged_group.empty()
                 self.super_attack_charge = 0
                 self.can_super_attack = False
                 self.is_super_attacking = True
@@ -216,6 +221,7 @@ class Player(pygame.sprite.Sprite):
         self.shield.draw(screen)
         self.super_shockwave()
         self.super_group.draw(screen)
+        self.charged_group.draw(screen)
         
         self.user_inputs()
         self.apply_gravity()
@@ -228,6 +234,7 @@ class Player(pygame.sprite.Sprite):
         self.hit.update(self)
         self.super_group.update()
         self.shield.update()
+        self.charged_group.update()
               
 
 class HitBox(pygame.sprite.Sprite):

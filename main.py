@@ -42,7 +42,6 @@ while True:
                 player.is_invulnerable = False
                 player.shield.empty()
             if event.type == spawn_timer:
-                # Uncomment to spawn ennemies
                 Mob()
                 pygame.time.set_timer(spawn_timer, randint(settings.difficulty, settings.difficulty+500))
         else:

@@ -20,6 +20,7 @@ def check_player_collision():
                 player.super_attack_charge = 0
                 player.can_super_attack = False
                 player.super_group.empty()
+                player.charged_group.empty()
                 player.frame_index = 0
                 player.status = "Stand"
                 player.hitbox.sprite.rect.midbottom = (settings.screen_width/2, settings.floor)

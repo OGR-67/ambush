@@ -9,7 +9,7 @@ class Shield(pygame.sprite.Sprite):
         self.frames = self.import_shield_assets()
         self.image = self.frames[self.frame_index]
         self.rect = self.image.get_rect(center=self.player.rect.center)
-        self.animation_speed = 0.15
+        self.animation_speed = 1
     
     def import_shield_assets(self):
         path = "graphics/Shield"
