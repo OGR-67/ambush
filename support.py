@@ -12,8 +12,12 @@ def import_folder(path, asset):
         for image in sorted(img_files):
             full_path = f"{path}/{image}"
             image_surf = pygame.image.load(full_path).convert_alpha()
-            if asset == "Super":
-                image_surf = pygame.transform.rotozoom(image_surf, 0, 4)
+            match asset:
+                case "Super":
+                    image_surf = pygame.transform.rotozoom(image_surf, 0, 4)
+                case "Shield":
+                    image_surf = pygame.transform.rotozoom(image_surf, 0, 0.20)
+                    vertical_shift = 0
             pygame.Surface.scroll(image_surf, horizontal_switch, vertical_shift)
             surface_list.append(image_surf)
     

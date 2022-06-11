@@ -5,6 +5,7 @@ from score import score
 from support import import_folder
 from super import SuperAttack
 from mob import mob_hitbox_group
+from shield import Shield
 
 
 class Player(pygame.sprite.Sprite):
@@ -56,6 +57,8 @@ class Player(pygame.sprite.Sprite):
         self.invulnerability_timer = pygame.USEREVENT + 4
         self.invulnerability_duration = 2000
         self.is_invulnerable = False
+        self.shield_sprite = Shield(self.hitbox_sprite)
+        self.shield = pygame.sprite.GroupSingle()
         
         # Utility
         self.gravity = 0.8
@@ -167,6 +170,7 @@ class Player(pygame.sprite.Sprite):
                 pygame.time.set_timer(self.attack_delay_timer, self.attack_delay)
         if keys[pygame.K_LSHIFT]:
             if self.can_super_attack and self.hitbox_sprite.rect.bottom == settings.floor:
+                self.shield.add(self.shield_sprite)
                 self.super_attack_charge = 0
                 self.can_super_attack = False
                 self.is_super_attacking = True
@@ -209,6 +213,7 @@ class Player(pygame.sprite.Sprite):
     def update(self, screen):
         self.group.draw(screen)
         self.hit.group.draw(screen)
+        self.shield.draw(screen)
         self.super_shockwave()
         self.super_group.draw(screen)
         
@@ -222,6 +227,7 @@ class Player(pygame.sprite.Sprite):
 
         self.hit.update(self)
         self.super_group.update()
+        self.shield.update()
               
 
 class HitBox(pygame.sprite.Sprite):
