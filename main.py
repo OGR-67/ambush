@@ -6,11 +6,11 @@ from support import cursor
 
 screen = pygame.display.set_mode(settings.screen_size)
 
+
 from score import score
-from player import Player
+from player import player
 from mob import Mob, mob_group, MobAnimation
 from game_over import check_player_collision, draw_intro_screen
-
 
 
 pygame.display.set_caption("Melee Warrior")
@@ -19,11 +19,8 @@ background_image = pygame.image.load("graphics/Battleground3.png").convert()
 background_surf = pygame.transform.scale(background_image, (settings.screen_width, settings.screen_height))
 background_rect = background_surf.get_rect(topleft=(0,0))
 
-player = Player()
-
 spawn_timer = pygame.USEREVENT + 3
 pygame.time.set_timer(spawn_timer, randint(1000, 1500))
-
  
 while True:
     for event in pygame.event.get():
@@ -55,24 +52,17 @@ while True:
         screen.blit(background_surf, background_rect)
         
         # Draw here
-        player.update(screen, mob_group)
+        player.update(screen)
         mob_group.update(screen)
         
         # Cursor
-        # for flame in player.super_group.sprites():
-        #     cursor(screen, "red", flame.rect)
-        
-        
-        # cursor2 = pygame.Rect(player.rect.left, 
-        #                      player.rect.top, 
-        #                      player.rect.width, 
-        #                      player.rect.height)
-        # pygame.draw.rect(screen, "green", cursor2, 5)
+        for mob in mob_group.sprites():
+            cursor(screen, "red", mob.rect)
         
         # Update here
         score.blit_score(screen)
-        check_player_collision(player, mob_group)
-        player.check_super_attack_collisions(mob_group)
+        check_player_collision()
+        player.check_super_attack_collisions()
         settings.set_difficulty()
         score.set_score(settings.difficulty, settings.max_difficulty)
     else:

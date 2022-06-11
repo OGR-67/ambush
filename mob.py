@@ -4,8 +4,6 @@ from random import choice
 from settings import settings
 from support import import_folder
 
-mob_group = pygame.sprite.Group()
-
 
 class Mob(pygame.sprite.Sprite):
     
@@ -19,7 +17,7 @@ class Mob(pygame.sprite.Sprite):
         
         # Animate
         self.frame_index = 0
-        self.animation_speed = 0.10
+        self.animation_speed = 0.18
         self.status = "Walk"
         self.assets = mob_assets.assets[self.type]
         self.animate()
@@ -35,7 +33,11 @@ class Mob(pygame.sprite.Sprite):
     def animate(self):
         self.frame_index += self.animation_speed
         if self.frame_index > len(self.assets[self.status]):
-            self.frame_index = 0
+            if self.status == "Death":
+                self.frame_index = 0
+                self.kill()
+            else:
+                self.frame_index = 0
         self.image = self.assets[self.status][int(self.frame_index)]
         if not self.moving_right:
             self.image = pygame.transform.flip(self.image, True, False)
@@ -45,7 +47,6 @@ class Mob(pygame.sprite.Sprite):
         and add it to the mob group"""
         
         rect_bottom = settings.floor
-        
         match self.type:
             case "demon":
                 self.speed = 2
@@ -77,8 +78,8 @@ class Mob(pygame.sprite.Sprite):
         
     def update(self, screen):
         mob_group.draw(screen)
-        self.move()
-        self.animate()
+        if self.status != "Death": self.move()
+        if self.alive(): self.animate()
 
 class MobAnimation:
     def __init__(self):
@@ -110,4 +111,6 @@ class MobAnimation:
                 fullpath = f"{new_path}{animation}"
                 self.assets[mob][animation] = import_folder(fullpath, mob)
 
+
+mob_group = pygame.sprite.Group()
 mob_assets = MobAnimation()

@@ -4,6 +4,8 @@ from settings import settings
 from score import score
 from support import import_folder
 from super import SuperAttack
+from mob import mob_group
+
 
 class Player(pygame.sprite.Sprite):
     '''Sprite class of the player'''
@@ -20,37 +22,40 @@ class Player(pygame.sprite.Sprite):
         self.frame_index = 0
         self.animation_speed = 0.3
         self.image = self.animations["Stand"][0]
-
         self.rect = self.image.get_rect(bottomleft=self.hitbox_sprite.rect.bottomleft)
         self.group = pygame.sprite.GroupSingle()
         self.group.add(self)
         
         # Hit sprite
-        self.hit = HitSprite(self)
+        self.hit = HitSprite()
 
         # Attribute
         self.speed = 4
-        self.jump_speed = -14
+        self.jump_speed = -16
+        
+        # Attack
+        self.attacking_timer = pygame.USEREVENT + 1
+        self.attack_delay_timer = pygame.USEREVENT + 2
         self.attack_duration = 200
         self.attack_delay = 400
+        self.can_attack = True
+        self.is_attacking = False
         
+        # Super attack
         self.super_attack_charge = 0
         self.super_max_charge = 100
-        self.super_charge_speed = 0.1
+        self.super_charge_speed = 50
+        self.can_super_attack = False
+        self.charge_rect = pygame.Rect(0,0,self.super_attack_charge, 10)
+        self.super_group = pygame.sprite.Group()
 
         # Utility
         self.gravity = 0.8
         self.direction = pygame.Vector2(0,0)
         self.is_moving = False
         self.is_going_right = True
-        self.is_attacking = False
-        self.can_attack = True
-        self.can_super_attack = False
-        self.attacking_timer = pygame.USEREVENT + 1
-        self.attack_delay_timer = pygame.USEREVENT + 2
         self.status = "Stand"
-        self.super_group = pygame.sprite.Group()
-        
+    
     def charge_super_attack(self):
         self.super_attack_charge += self.super_charge_speed
         
@@ -146,19 +151,42 @@ class Player(pygame.sprite.Sprite):
                 self.super_attack_charge = 0
                 self.can_super_attack = False
             
-    def check_super_attack_collisions(self, mob_group):
+    def draw_super_attack_charge(self, screen):
+        mid_bottom_coor = (settings.screen_width/2, 50)
+        self.charge_rect.midbottom = mid_bottom_coor
+        self.charge_rect.width = self.super_attack_charge * 2
+        if self.super_attack_charge < 20:
+            color = "red"
+        elif self.super_attack_charge < 40:
+            color = "orange"
+        elif self.super_attack_charge < 60:
+            color = "yellow"
+        elif self.super_attack_charge < 80:
+            color = "green"
+        elif self.super_attack_charge < 100:
+            color = "#05e7f7"
+        else:
+            color = "blue"
+        
+        pygame.draw.rect(screen, color, self.charge_rect)
+            
+    def check_super_attack_collisions(self):
         hit_points = 100
-        mobs_hitten = pygame.sprite.groupcollide(mob_group, self.super_group, False, False)
+
+        mobs_hitten = pygame.sprite.groupcollide(mob_group, self.super_group,False, False)
         for mob in mobs_hitten.keys():
+            mob.frame_index = 0
             if not mob.is_invincible: 
                 mob.hp -= 1
                 score.score += hit_points
             if mob.hp == 0:
-                mob_group.remove(mob)
+                mob.status = "Death"
+                mob.speed = 0
+                mob.is_invincible = True
             mob.is_invincible = True
             mob.start_point_x = mob.rect.x
         
-    def update(self, screen, mob):
+    def update(self, screen):
         self.group.draw(screen)
         self.hit.group.draw(screen)
         self.super_group.draw(screen)
@@ -169,26 +197,26 @@ class Player(pygame.sprite.Sprite):
         
         self.charge_super_attack()
         self.check_super_attack()
+        self.draw_super_attack_charge(screen)
 
-        self.hit.update(self, mob)
+        self.hit.update(self)
         self.super_group.update()
               
 
 class HitBox(pygame.sprite.Sprite):
     '''Hit box sprite class. Utilize it to align character's rect on it  and for collision'''
     def __init__(self):
+        super().__init__()
         starting_point = (settings.screen_width/2, settings.floor)
         size = (40,60)
-        super().__init__()
         self.image = pygame.Surface(size)
         self.rect = self.image.get_rect(midbottom=starting_point)
 
 
 class HitSprite(pygame.sprite.Sprite):
     '''A class that represents the hit box of the attack of the player'''
-    def __init__(self, player):
+    def __init__(self):
         super().__init__()
-        # Hit sprite
         size = (35, 60)
         self.image = pygame.Surface(size)
         self.image.set_alpha(0)
@@ -206,21 +234,27 @@ class HitSprite(pygame.sprite.Sprite):
         else:
             self.rect.bottomright = (0,0)
 
-    def check_collision(self, mob_group):
+    def check_collision(self):
         '''Checks collisions between the hit zone and any ennemi'''
         hit_points = 100
         mobs_hitten = pygame.sprite.groupcollide(mob_group, self.group,False, False)
         for mob in mobs_hitten.keys():
+            mob.frame_index = 0
             if not mob.is_invincible: 
                 mob.hp -= 1
                 score.score += hit_points
             if mob.hp == 0:
-                mob_group.remove(mob)
+                mob.status = "Death"
+                mob.speed = 0
+                mob.is_invincible = True
+                # mob_group.remove(mob)
             mob.is_invincible = True
             mob.start_point_x = mob.rect.x
         
 
-    def update(self, player, mob_group):
+    def update(self, player):
         self.check_direction_and_status(player)
-        self.check_collision(mob_group)
+        self.check_collision()
 
+
+player = Player()

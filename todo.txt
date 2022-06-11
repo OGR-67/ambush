@@ -4,7 +4,7 @@
     # Character 3hp
 
 ## Refactor
-    # Game_over to class
+    
 
 ## Better Intro and gameover screen
     # A kind of lore like "You were ambushed! Survive as long as you can!!!"
@@ -14,12 +14,9 @@
         - Controls
         - Press Return to start or try again when game's over
 
-## run attack animation, check for skiped or double frame
-
 ## Death animation for mobs
 
 ## Death animation for player
 
 ## Super attack
-    # Charges with kills
-    # With shockwave
+    better state feedback

@@ -2,16 +2,28 @@ import pygame
 
 from settings import settings
 from score import score
+from mob import mob_group
+from player import player
 
-def check_player_collision(player, mob_group):
-    if pygame.sprite.groupcollide(player.hitbox, mob_group, False, False):
-        mob_group.empty()
-        score.user_score = score.score
-        score.score = 0
-        settings.difficulty = settings.start_difficulty
-        settings.game_active =  False
-        if score.user_score > score.best_score:
-            score.best_score = score.user_score
+def check_player_collision():
+    mobs_hitten = pygame.sprite.groupcollide(mob_group, player.hitbox, False, False)
+    for mob in mobs_hitten.keys():
+        if mob.status != "Death":
+            # mob
+            mob_group.empty()
+
+            # player
+            player.super_attack_charge = 0
+            player.can_super_attack = False
+            player.hitbox.sprite.rect.midbottom = (settings.screen_width/2, settings.floor)
+            
+            # score
+            score.user_score = score.score
+            score.score = 0
+            settings.difficulty = settings.start_difficulty
+            settings.game_active =  False
+            if score.user_score > score.best_score:
+                score.best_score = score.user_score
 
 def draw_intro_screen(screen):
     # Background
