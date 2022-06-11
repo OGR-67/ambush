@@ -15,14 +15,18 @@ class SuperAttack(pygame.sprite.Sprite):
         self.get_rect(player_bottomleft, player_bottomright)
 
         self.is_over = False
-        
         self.speed = 4
     
     def get_rect(self, player_bottomleft, player_bottomright):
+        shift_x = 120
+        shift_y = 120
         if self.is_going_right:
             self.rect = self.image.get_rect(bottomleft=player_bottomright)
+            self.rect.x -= shift_x
         else:
             self.rect = self.image.get_rect(bottomright=player_bottomleft)
+            self.rect.x += shift_x
+        self.rect.y += shift_y
         
     def animate(self):
         self.frame_index += self.animation_speed

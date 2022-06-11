@@ -1,11 +1,8 @@
-
-
 ## health logic for character and mobs
     # Character 3hp
 
-## Refactor
+## Refactor / Better names
     
-
 ## Better Intro and gameover screen
     # A kind of lore like "You were ambushed! Survive as long as you can!!!"
     # background
@@ -14,9 +11,9 @@
         - Controls
         - Press Return to start or try again when game's over
 
-## Death animation for mobs
-
 ## Death animation for player
 
 ## Super attack
-    better state feedback
+    # Need: invulnerability frame. Maybe think for reusability for multiple life char
+    # Bug: when shockwave touch a mob going in the same way as it, 
+        the mob still go back istead of follow the wave

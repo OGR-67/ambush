@@ -2,19 +2,23 @@ import pygame
 
 from settings import settings
 from score import score
-from mob import mob_group
+from mob import mob_hitbox_group, mob_group
 from player import player
 
 def check_player_collision():
-    mobs_hitten = pygame.sprite.groupcollide(mob_group, player.hitbox, False, False)
+    mobs_hitten = pygame.sprite.groupcollide(mob_hitbox_group, player.hitbox, False, False)
     for mob in mobs_hitten.keys():
         if mob.status != "Death":
             # mob
+            mob_hitbox_group.empty()
             mob_group.empty()
-
+            
             # player
             player.super_attack_charge = 0
             player.can_super_attack = False
+            player.super_group.empty()
+            player.frame_index = 0
+            player.status = "Stand"
             player.hitbox.sprite.rect.midbottom = (settings.screen_width/2, settings.floor)
             
             # score

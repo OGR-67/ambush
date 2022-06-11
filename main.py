@@ -6,10 +6,9 @@ from support import cursor
 
 screen = pygame.display.set_mode(settings.screen_size)
 
-
 from score import score
 from player import player
-from mob import Mob, mob_group, MobAnimation
+from mob import Mob, mob_group
 from game_over import check_player_collision, draw_intro_screen
 
 
@@ -56,8 +55,8 @@ while True:
         mob_group.update(screen)
         
         # Cursor
-        for mob in mob_group.sprites():
-            cursor(screen, "red", mob.rect)
+        # for mob in mob_group.sprites():
+        #     cursor(screen, "red", mob.hitbox_sprite.rect)
         
         # Update here
         score.blit_score(screen)
