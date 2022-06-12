@@ -15,6 +15,8 @@ clock = pygame.time.Clock()
 background_image = pygame.image.load("graphics/Battleground.png").convert()
 background_surf = pygame.transform.scale(background_image, (settings.screen_width, settings.screen_height))
 background_rect = background_surf.get_rect(topleft=(0,0))
+background_music = pygame.mixer.Sound("sounds/background_music.mp3")
+background_music.play().set_volume(0.5)
 
 spawn_timer = pygame.USEREVENT + 3
 pygame.time.set_timer(spawn_timer, randint(1000, 1500))
@@ -61,8 +63,8 @@ while True:
         check_player_collision()
         player.check_super_attack_collisions()
         # Cursor
-        # for mob in mob_group.sprites():
-        #     cursor(screen, "red", mob.hitbox_sprite.rect)
+        # for item in player.heart_group.sprites():
+        #     cursor(screen, "red", item.rect)
     
     else: draw_intro_screen(screen)
     

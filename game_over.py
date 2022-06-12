@@ -14,7 +14,8 @@ def check_player_collision():
             for mob in mobs_hitten.keys():
                 if mob.status != "Death":
                     player.hp -= 1
-                    if player.hp == 0: 
+                    if player.hp == 0:
+                        settings.player_death.play().set_volume(0.5)
                         mob_hitbox_group.empty()
                         mob_group.empty()
                         player.reset()
@@ -22,6 +23,7 @@ def check_player_collision():
                         score.reset_score()
                         score.check_best_score()
                     else:
+                        settings.player_hit.play()
                         player.go_invulnerable() 
 
 def draw_intro_screen(screen):

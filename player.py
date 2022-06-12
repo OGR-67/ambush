@@ -7,6 +7,7 @@ from super import SuperAttack, ChargedChar, ChargedBar
 from mob import mob_hitbox_group
 from shield import Shield
 from heart import heart
+from blood import blood
 
 
 class Player(pygame.sprite.Sprite):
@@ -29,7 +30,8 @@ class Player(pygame.sprite.Sprite):
         self.group.add(self)
         
         # Heart
-        self.heart_group = pygame.sprite.GroupSingle()
+        self.blood = blood
+        self.heart_group = pygame.sprite.Group()
         self.heart_group.add(heart)
         
         # Hit sprite
@@ -78,6 +80,8 @@ class Player(pygame.sprite.Sprite):
     
     def set_heart_frame_index(self):
         heart.frame_index = 3 - self.hp
+        if heart.frame_index == 2:
+            self.heart_group.add(self.blood)
         heart.image = heart.frames[heart.frame_index]
     
     def charge_super_attack(self):
@@ -94,12 +98,12 @@ class Player(pygame.sprite.Sprite):
     def draw_super_attack_charge(self, screen):
         """Draw charge bar of super attack and its border"""
         self.charge_rect.width = self.super_attack_charge * 2
-        if self.super_attack_charge < 20: color = "red"
-        elif self.super_attack_charge < 40: color = "orange"
-        elif self.super_attack_charge < 60: color = "yellow"
-        elif self.super_attack_charge < 80: color = "green"
-        elif self.super_attack_charge < 100: color = "#05e7f7"
-        else: color = "blue"
+        if self.super_attack_charge < 20: color = "#fc3a3a"
+        elif self.super_attack_charge < 40: color = "#eb7107"
+        elif self.super_attack_charge < 60: color = "#cde630"
+        elif self.super_attack_charge < 80: color = "#56f03e"
+        elif self.super_attack_charge < 100: color = "#42ecf5"
+        else: color = "#e6e6fc"
         pygame.draw.rect(screen, color, self.charge_rect)
         border_size = 2
         border_color = "black"
@@ -124,6 +128,7 @@ class Player(pygame.sprite.Sprite):
         """Create shockwave sprite, spaw it to the good side of the player 
         ande add it to the group"""
         if self.super_atack_shockwave:
+            settings.shockwave.play()
             super_attack = SuperAttack(self.is_going_right, self.rect.bottomleft, self.rect.bottomright)
             self.super_group.add(super_attack)
             self.super_atack_shockwave = False
@@ -206,16 +211,19 @@ class Player(pygame.sprite.Sprite):
             if self.hitbox_sprite.rect.right > settings.screen_width:
                 self.hitbox_sprite.rect.right = settings.screen_width
         if keys[pygame.K_UP] and self.hitbox_sprite.rect.bottom == settings.floor:
+            settings.player_jump.play()
             self.direction.y = self.jump_speed
             self.is_moving = False
         if keys[pygame.K_SPACE]:
             if self.can_attack:
+                settings.player_attack.play()
                 self.is_attacking = True
                 self.can_attack = False
                 pygame.time.set_timer(self.attacking_timer, self.attack_duration)
                 pygame.time.set_timer(self.attack_delay_timer, self.attack_delay)
         if keys[pygame.K_LSHIFT]:
             if self.can_super_attack and self.hitbox_sprite.rect.bottom == settings.floor:
+                settings.player_heavy_attack.play()
                 self.charged_group.empty()
                 self.super_attack_charge = 0
                 self.can_super_attack = False
@@ -229,6 +237,7 @@ class Player(pygame.sprite.Sprite):
         self.can_super_attack = False
         self.super_group.empty()
         self.charged_group.empty()
+        self.heart_group.remove(self.blood)
         self.frame_index = 0
         self.status = "Stand"
         self.hitbox.sprite.rect.midbottom = (settings.screen_width/2, settings.floor)
@@ -260,7 +269,7 @@ class Player(pygame.sprite.Sprite):
         self.shield.update()
         self.charged_group.update()
         self.set_heart_frame_index()
-              
+        self.heart_group.update()
 
 class HitBox(pygame.sprite.Sprite):
     '''Hit box sprite class. Utilize it to align character's rect on it  and for collision'''
@@ -303,8 +312,11 @@ class HitSprite(pygame.sprite.Sprite):
                 mob_hitbox.hp -= 1
                 score.score += hit_points
                 if mob_hitbox.hp == 0:
+                    settings.mob_death.play()
                     mob_hitbox.status = "Death"
                     mob_hitbox.speed = 0
+                else: settings.mob_hit.play()
+                    
             mob_hitbox.is_invincible = True
             mob_hitbox.start_point_x = mob_hitbox.rect.x
         

@@ -20,6 +20,15 @@ class Settings:
         # score
         self.score = 0
         self.user_score = 0
+        # Sounds
+        self.player_attack = pygame.mixer.Sound("sounds/audio_effects/Knight/attack.wav")
+        self.player_death = pygame.mixer.Sound("sounds/audio_effects/Knight/death.wav")
+        self.player_heavy_attack = pygame.mixer.Sound("sounds/audio_effects/Knight/heavyattack.wav")
+        self.player_hit = pygame.mixer.Sound("sounds/audio_effects/Knight/hit.wav")
+        self.player_jump = pygame.mixer.Sound("sounds/audio_effects/Knight/jump.wav")
+        self.shockwave = pygame.mixer.Sound("sounds/audio_effects/shockwave.wav")
+        self.mob_hit = pygame.mixer.Sound("sounds/audio_effects/Mob/hit.wav")
+        self.mob_death = pygame.mixer.Sound("sounds/audio_effects/Mob/death.wav")
         
     def scale_difficulty(self):
         if self.difficulty > self.max_difficulty:

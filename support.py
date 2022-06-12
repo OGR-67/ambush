@@ -27,6 +27,8 @@ def import_folder(path, asset):
                 case "Heart":
                     image_surf = pygame.transform.rotozoom(image_surf, 0, 0.3)
                     vertical_shift = 0
+                case "Blood":
+                    image_surf = pygame.transform.rotozoom(image_surf, 0, 1.5)
             pygame.Surface.scroll(image_surf, horizontal_switch, vertical_shift)
             surface_list.append(image_surf)
     return surface_list
