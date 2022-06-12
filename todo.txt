@@ -1,6 +1,3 @@
-## health logic for character and mobs
-    # Health feedback 
-
 ## Refactor / Better names
     
 ## Better Intro and gameover screen
@@ -18,3 +15,5 @@
         the mob still go back istead of follow the wave
 
 ## Resolve "libpng warning: iCCP: known incorrect sRGB profile" warning
+
+## Sounds effects and music

@@ -24,9 +24,11 @@ def import_folder(path, asset):
                 case "Charged_bar":
                     image_surf = pygame.transform.rotozoom(image_surf, 0, 0.50)
                     vertical_shift = 0
+                case "Heart":
+                    image_surf = pygame.transform.rotozoom(image_surf, 0, 0.3)
+                    vertical_shift = 0
             pygame.Surface.scroll(image_surf, horizontal_switch, vertical_shift)
             surface_list.append(image_surf)
-    
     return surface_list
 
 def cursor(screen, color, rect):

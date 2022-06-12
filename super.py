@@ -103,4 +103,3 @@ class SuperAttack(pygame.sprite.Sprite):
         if not self.is_over:
             self.move()
             self.animate()
-

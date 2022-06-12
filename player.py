@@ -6,6 +6,7 @@ from support import import_folder
 from super import SuperAttack, ChargedChar, ChargedBar
 from mob import mob_hitbox_group
 from shield import Shield
+from heart import heart
 
 
 class Player(pygame.sprite.Sprite):
@@ -26,6 +27,10 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(bottomleft=self.hitbox_sprite.rect.bottomleft)
         self.group = pygame.sprite.GroupSingle()
         self.group.add(self)
+        
+        # Heart
+        self.heart_group = pygame.sprite.GroupSingle()
+        self.heart_group.add(heart)
         
         # Hit sprite
         self.hit = HitSprite()
@@ -50,8 +55,8 @@ class Player(pygame.sprite.Sprite):
         self.can_super_attack = False
         self.is_super_attacking = False
         self.super_atack_shockwave = False
-        self.charge_rect = pygame.Rect(50,50,self.super_attack_charge, 15)
-        self.charge_border_rect = pygame.Rect(50,50,200, 15)
+        self.charge_rect = pygame.Rect(70,30,self.super_attack_charge, 15)
+        self.charge_border_rect = pygame.Rect(70,30,200, 15)
         self.super_group = pygame.sprite.Group()
         self.charged_char = ChargedChar(self.hitbox_sprite)
         self.charged_bar = ChargedBar(self.charge_border_rect)
@@ -70,6 +75,10 @@ class Player(pygame.sprite.Sprite):
         self.is_moving = False
         self.is_going_right = True
         self.status = "Stand"
+    
+    def set_heart_frame_index(self):
+        heart.frame_index = 3 - self.hp
+        heart.image = heart.frames[heart.frame_index]
     
     def charge_super_attack(self):
         """Increment value of super attack charge"""
@@ -215,6 +224,7 @@ class Player(pygame.sprite.Sprite):
     
     def reset(self):
         """Reset player when game's over"""
+        self.hp = 3
         self.super_attack_charge = 0
         self.can_super_attack = False
         self.super_group.empty()
@@ -235,6 +245,7 @@ class Player(pygame.sprite.Sprite):
         self.super_shockwave()
         self.super_group.draw(screen)
         self.charged_group.draw(screen)
+        self.heart_group.draw(screen)
         
         self.user_inputs()
         self.apply_gravity()
@@ -248,6 +259,7 @@ class Player(pygame.sprite.Sprite):
         self.super_group.update()
         self.shield.update()
         self.charged_group.update()
+        self.set_heart_frame_index()
               
 
 class HitBox(pygame.sprite.Sprite):
