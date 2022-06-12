@@ -4,7 +4,6 @@ class Score():
     def __init__(self):
         self.score = 0
         self.get_best_score()
-        
         self.font_size = 25
         self.font_left = 550
         self.font_top = 50
@@ -25,5 +24,13 @@ class Score():
     
     def set_score(self, difficulty, max_difficulty):
         self.score += int(100 * (max_difficulty / difficulty))
+        
+    def reset_score(self):
+        self.user_score = self.score
+        self.score = 0
+    
+    def check_best_score(self):
+        if self.user_score > self.best_score:
+            self.best_score = self.user_score
 
 score = Score()

@@ -59,7 +59,7 @@ class Player(pygame.sprite.Sprite):
 
         # invulnerablity frame
         self.invulnerability_timer = pygame.USEREVENT + 4
-        self.invulnerability_duration = 2000
+        self.invulnerability_duration = 1000
         self.is_invulnerable = False
         self.shield_sprite = Shield(self.hitbox_sprite)
         self.shield = pygame.sprite.GroupSingle()
@@ -72,15 +72,48 @@ class Player(pygame.sprite.Sprite):
         self.status = "Stand"
     
     def charge_super_attack(self):
+        """Increment value of super attack charge"""
         self.super_attack_charge += self.super_charge_speed
         
     def check_super_attack(self):
+        """Check if super attack is full charged"""
         if self.super_attack_charge >= self.super_max_charge:
             self.super_attack_charge = self.super_max_charge
             self.can_super_attack = True
             self.charged_group.add([self.charged_char, self.charged_bar])
+    
+    def draw_super_attack_charge(self, screen):
+        """Draw charge bar of super attack and its border"""
+        self.charge_rect.width = self.super_attack_charge * 2
+        if self.super_attack_charge < 20: color = "red"
+        elif self.super_attack_charge < 40: color = "orange"
+        elif self.super_attack_charge < 60: color = "yellow"
+        elif self.super_attack_charge < 80: color = "green"
+        elif self.super_attack_charge < 100: color = "#05e7f7"
+        else: color = "blue"
+        pygame.draw.rect(screen, color, self.charge_rect)
+        border_size = 2
+        border_color = "black"
+        pygame.draw.rect(screen, border_color, self.charge_border_rect, border_size)
+            
+    def check_super_attack_collisions(self):
+        """Chek collision between super attack shockwave and mobs"""
+        hit_points = 100
+        mobs_hitten = pygame.sprite.groupcollide(mob_hitbox_group, self.super_group,False, False)
+        for mob_hitbox in mobs_hitten.keys():
+            if not mob_hitbox.is_invincible: 
+                mob_hitbox.frame_index = 0
+                mob_hitbox.hp -= 1
+                score.score += hit_points
+                if mob_hitbox.hp == 0:
+                    mob_hitbox.status = "Death"
+                    mob_hitbox.speed = 0
+            mob_hitbox.is_invincible = True
+            mob_hitbox.start_point_x = mob_hitbox.rect.x
             
     def super_shockwave(self):
+        """Create shockwave sprite, spaw it to the good side of the player 
+        ande add it to the group"""
         if self.super_atack_shockwave:
             super_attack = SuperAttack(self.is_going_right, self.rect.bottomleft, self.rect.bottomright)
             self.super_group.add(super_attack)
@@ -174,47 +207,27 @@ class Player(pygame.sprite.Sprite):
                 pygame.time.set_timer(self.attack_delay_timer, self.attack_delay)
         if keys[pygame.K_LSHIFT]:
             if self.can_super_attack and self.hitbox_sprite.rect.bottom == settings.floor:
-                self.shield.add(self.shield_sprite)
                 self.charged_group.empty()
                 self.super_attack_charge = 0
                 self.can_super_attack = False
                 self.is_super_attacking = True
-                self.is_invulnerable = True
-                pygame.time.set_timer(self.invulnerability_timer, self.invulnerability_duration)
-            
-    def draw_super_attack_charge(self, screen):
-        self.charge_rect.width = self.super_attack_charge * 2
-        if self.super_attack_charge < 20:
-            color = "red"
-        elif self.super_attack_charge < 40:
-            color = "orange"
-        elif self.super_attack_charge < 60:
-            color = "yellow"
-        elif self.super_attack_charge < 80:
-            color = "green"
-        elif self.super_attack_charge < 100:
-            color = "#05e7f7"
-        else:
-            color = "blue"
-        
-        pygame.draw.rect(screen, color, self.charge_rect)
-        pygame.draw.rect(screen, "black", self.charge_border_rect, 2)
-            
-    def check_super_attack_collisions(self):
-        hit_points = 100
-
-        mobs_hitten = pygame.sprite.groupcollide(mob_hitbox_group, self.super_group,False, False)
-        for mob_hitbox in mobs_hitten.keys():
-            if not mob_hitbox.is_invincible: 
-                mob_hitbox.frame_index = 0
-                mob_hitbox.hp -= 1
-                score.score += hit_points
-                if mob_hitbox.hp == 0:
-                    mob_hitbox.status = "Death"
-                    mob_hitbox.speed = 0
-            mob_hitbox.is_invincible = True
-            mob_hitbox.start_point_x = mob_hitbox.rect.x
-        
+                self.go_invulnerable()
+    
+    def reset(self):
+        """Reset player when game's over"""
+        self.super_attack_charge = 0
+        self.can_super_attack = False
+        self.super_group.empty()
+        self.charged_group.empty()
+        self.frame_index = 0
+        self.status = "Stand"
+        self.hitbox.sprite.rect.midbottom = (settings.screen_width/2, settings.floor)
+    
+    def go_invulnerable(self):
+        self.shield.add(self.shield_sprite)
+        self.is_invulnerable = True
+        pygame.time.set_timer(self.invulnerability_timer, self.invulnerability_duration)
+    
     def update(self, screen):
         self.group.draw(screen)
         self.hit.group.draw(screen)

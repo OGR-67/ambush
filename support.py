@@ -16,7 +16,7 @@ def import_folder(path, asset):
                     image_surf = pygame.transform.rotozoom(image_surf, 0, 4)
                 case "Shield":
                     image_surf = pygame.transform.rotozoom(image_surf, 0, 0.70)
-                    image_surf.set_alpha(200)
+                    image_surf.set_alpha(100)
                     vertical_shift = 0
                 case "Charged":
                     image_surf = pygame.transform.rotozoom(image_surf, 0, 0.20)

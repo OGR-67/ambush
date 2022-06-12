@@ -10,7 +10,7 @@ class Mob(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         # Spawn
-        mob_types = ["demon", "lizard", "jinn"]
+        mob_types = ["demon", "lizard", "jinn", "lizard", "jinn"]
         self.type = str(choice(mob_types))
         self.spawn_choice = choice([1, -1])
         self.moving_right = True if self.spawn_choice == 1 else False
@@ -25,7 +25,8 @@ class Mob(pygame.sprite.Sprite):
         
     def animate(self):
         self.hitbox_sprite.frame_index += self.animation_speed
-        if self.hitbox_sprite.frame_index > len(self.assets[self.hitbox_sprite.status]):
+        last_frame_index = len(self.assets[self.hitbox_sprite.status])
+        if self.hitbox_sprite.frame_index > last_frame_index:
             if self.hitbox_sprite.status == "Death":
                 self.hitbox_sprite.frame_index = 0
                 self.kill()
@@ -42,23 +43,18 @@ class Mob(pygame.sprite.Sprite):
             case "demon":
                 self.speed = 2
                 size = (60, 85)
-                
             case "lizard": 
                 self.speed = 4
                 size = (70, 45)
             case "jinn": 
                 self.speed = 3
                 size = (40, 70)
-
-        if self.type == "jinn": rect_bottom -= 50
-        
+                rect_bottom -= 50
         self.hitbox_sprite = MobHitbox(size)
         if self.type == "demon": self.hitbox_sprite.hp = 2
         if self.spawn_choice == -1:
             self.hitbox_sprite.rect.midbottom = (settings.screen_width-30, rect_bottom)
-        else:
-            self.hitbox_sprite.rect.midbottom = (30, rect_bottom)
-        
+        else: self.hitbox_sprite.rect.midbottom = (30, rect_bottom)
         mob_group.add(self)
         mob_hitbox_group.add(self.hitbox_sprite)
         
@@ -73,8 +69,6 @@ class Mob(pygame.sprite.Sprite):
             case"lizard":
                 shift_y = 0
                 shift_x = 0 * self.spawn_choice
-                
-
         self.rect.centerx = self.hitbox_sprite.rect.centerx + shift_x
         self.rect.centery = self.hitbox_sprite.rect.top + shift_y        
 
@@ -89,12 +83,12 @@ class Mob(pygame.sprite.Sprite):
                 self.hitbox_sprite.status = "Walk"
         else: self.hitbox_sprite.rect.x += self.speed * self.spawn_choice
         
-        if self.hitbox_sprite.rect.right <= -50 or self.hitbox_sprite.rect.left >= settings.screen_width + 50:
+        if self.hitbox_sprite.rect.right <= -50 or \
+        self.hitbox_sprite.rect.left >= settings.screen_width + 50:
             self.kill()
             self.hitbox_sprite.kill()
         
     def update(self, screen):
-        
         if self.hitbox_sprite.status != "Death": self.move()
         if self.alive(): self.animate()
         self.stick_asset_to_hibox()
@@ -110,8 +104,6 @@ class MobHitbox(pygame.sprite.Sprite):
         
         self.hp = 1
         self.status = "Walk"
-        
-        # When hit
         self.is_invincible = False
         self.start_point_x = 0
 
@@ -119,25 +111,12 @@ class MobHitbox(pygame.sprite.Sprite):
 class MobAnimation:
     def __init__(self):
         self.assets = {
-            "demon": {
-                "Death": [],
-                "Walk": [],
-                "Hurt": []
-                    },
-            "jinn": {
-                "Death": [],
-                "Walk": [],
-                "Hurt": []
-                    },
-                "lizard": {
-                    "Death": [],
-                    "Walk": [],
-                    "Hurt": []
-                    },
+            "demon": {"Death": [], "Walk": [], "Hurt": []},
+            "jinn": {"Death": [], "Walk": [], "Hurt": []},
+                "lizard": {"Death": [], "Walk": [], "Hurt": []},
             }
         self.import_mobs_assets()
 
-            
     def import_mobs_assets(self):
         path = "graphics/Mobs/"
         for mob in self.assets.keys():

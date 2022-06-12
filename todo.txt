@@ -1,5 +1,5 @@
 ## health logic for character and mobs
-    # Character 3hp
+    # Health feedback 
 
 ## Refactor / Better names
     

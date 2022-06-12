@@ -10,28 +10,19 @@ def check_player_collision():
     Reset the game"""
     if not player.is_invulnerable:
         mobs_hitten = pygame.sprite.groupcollide(mob_hitbox_group, player.hitbox, False, False)
-        for mob in mobs_hitten.keys():
-            if mob.status != "Death":
-                # mob
-                mob_hitbox_group.empty()
-                mob_group.empty()
-                
-                # player
-                player.super_attack_charge = 0
-                player.can_super_attack = False
-                player.super_group.empty()
-                player.charged_group.empty()
-                player.frame_index = 0
-                player.status = "Stand"
-                player.hitbox.sprite.rect.midbottom = (settings.screen_width/2, settings.floor)
-                
-                # score
-                score.user_score = score.score
-                score.score = 0
-                settings.difficulty = settings.start_difficulty
-                settings.game_active =  False
-                if score.user_score > score.best_score:
-                    score.best_score = score.user_score
+        if len(mobs_hitten) != 0: 
+            for mob in mobs_hitten.keys():
+                if mob.status != "Death":
+                    player.hp -= 1
+                    if player.hp == 0: 
+                        mob_hitbox_group.empty()
+                        mob_group.empty()
+                        player.reset()
+                        settings.reset()
+                        score.reset_score()
+                        score.check_best_score()
+                    else:
+                        player.go_invulnerable() 
 
 def draw_intro_screen(screen):
     # Background
@@ -39,14 +30,12 @@ def draw_intro_screen(screen):
     pygame.Surface.fill(intro_background_surf, "#207a6b")
     intro_background_rect = intro_background_surf.get_rect(topleft = (0,0))
     screen.blit(intro_background_surf,intro_background_rect)
-    
     # Avatar
     avatar_center = (600,150)
     avatar_surf = pygame.image.load("graphics/Knight/Idle/idle1.png").convert_alpha()
     avatar_surf = pygame.transform.scale2x(avatar_surf)
     avatar_rect = avatar_surf.get_rect(center=avatar_center)
     screen.blit(avatar_surf, avatar_rect)
-    
     # Instructions / Score
     font_size = 40
     font = pygame.font.Font("alagard.ttf", font_size)
