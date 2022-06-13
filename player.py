@@ -77,11 +77,15 @@ class Player(pygame.sprite.Sprite):
         self.is_moving = False
         self.is_going_right = True
         self.status = "Stand"
+        self.is_dying = False
     
     def set_heart_frame_index(self):
         heart.frame_index = 3 - self.hp
         if heart.frame_index == 2:
             self.heart_group.add(self.blood)
+        if heart.frame_index >= len(heart.frames):
+            self.heart_group.remove(self.blood)
+            heart.frame_index = 3
         heart.image = heart.frames[heart.frame_index]
     
     def charge_super_attack(self):
@@ -137,11 +141,14 @@ class Player(pygame.sprite.Sprite):
         """Stick the character rect to the hitbox rect according to the player's direction"""
         # self.image = self.animations["Run_Attack"][3]
         self.animate()
-        if self.is_going_right:
-            self.rect.midbottom = self.hitbox_sprite.rect.bottomright
+        if self.status == "Death":
+            self.rect.bottomright = self.hitbox_sprite.rect.center
         else:
-            self.image = pygame.transform.flip(self.image, True, False)
-            self.rect.midbottom = self.hitbox_sprite.rect.bottomleft
+            if self.is_going_right:
+                self.rect.midbottom = self.hitbox_sprite.rect.bottomright
+            else:
+                self.image = pygame.transform.flip(self.image, True, False)
+                self.rect.midbottom = self.hitbox_sprite.rect.bottomleft
     
     def animate(self):
         '''Animate player'''
@@ -150,6 +157,11 @@ class Player(pygame.sprite.Sprite):
         self.frame_index += self.animation_speed
         if len(self.animations[self.status]) == 0: self.frame_index = 0
         elif self.status != ancient_status: self.frame_index = 0
+        elif self.status == "Death" and self.frame_index >= len(self.animations[self.status]):
+            self.status = "Stand"
+            settings.game_active =  False
+            self.reset()
+
         elif self.frame_index >= len(self.animations[self.status]) or self.status != ancient_status:
             self.frame_index = 0
             if self.is_super_attacking:
@@ -160,7 +172,8 @@ class Player(pygame.sprite.Sprite):
     def get_status(self):
         """Get the good status according to player's input."""
         # Attack
-        if self.is_super_attacking:
+        if self.status == "Death": pass
+        elif self.is_super_attacking:
             self.status = "Attack_Extra"
         elif self.is_attacking:
             self.status = "Attack"
@@ -182,6 +195,7 @@ class Player(pygame.sprite.Sprite):
             "Jump": [],
             "Attack_Extra": [],
             "Stand": [],
+            "Death": [],
         }
         for animation in self.animations.keys():
             full_path  = character_path + animation
@@ -197,38 +211,39 @@ class Player(pygame.sprite.Sprite):
     def user_inputs(self):
         '''Checks user's inputs and acts in consequence'''
         self.is_moving = False
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
-            self.is_going_right = False
-            self.is_moving = True
-            self.hitbox_sprite.rect.x -= self.speed
-            if self.hitbox_sprite.rect.left < 0:
-                self.hitbox_sprite.rect.left = 0
-        if keys[pygame.K_RIGHT]:
-            self.is_going_right = True
-            self.is_moving = True
-            self.hitbox_sprite.rect.x += self.speed
-            if self.hitbox_sprite.rect.right > settings.screen_width:
-                self.hitbox_sprite.rect.right = settings.screen_width
-        if keys[pygame.K_UP] and self.hitbox_sprite.rect.bottom == settings.floor:
-            settings.player_jump.play()
-            self.direction.y = self.jump_speed
-            self.is_moving = False
-        if keys[pygame.K_SPACE]:
-            if self.can_attack:
-                settings.player_attack.play()
-                self.is_attacking = True
-                self.can_attack = False
-                pygame.time.set_timer(self.attacking_timer, self.attack_duration)
-                pygame.time.set_timer(self.attack_delay_timer, self.attack_delay)
-        if keys[pygame.K_LSHIFT]:
-            if self.can_super_attack and self.hitbox_sprite.rect.bottom == settings.floor:
-                settings.player_heavy_attack.play()
-                self.charged_group.empty()
-                self.super_attack_charge = 0
-                self.can_super_attack = False
-                self.is_super_attacking = True
-                self.go_invulnerable()
+        if self.status != "Death":
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_LEFT]:
+                self.is_going_right = False
+                self.is_moving = True
+                self.hitbox_sprite.rect.x -= self.speed
+                if self.hitbox_sprite.rect.left < 0:
+                    self.hitbox_sprite.rect.left = 0
+            if keys[pygame.K_RIGHT]:
+                self.is_going_right = True
+                self.is_moving = True
+                self.hitbox_sprite.rect.x += self.speed
+                if self.hitbox_sprite.rect.right > settings.screen_width:
+                    self.hitbox_sprite.rect.right = settings.screen_width
+            if keys[pygame.K_UP] and self.hitbox_sprite.rect.bottom == settings.floor:
+                settings.player_jump.play()
+                self.direction.y = self.jump_speed
+                self.is_moving = False
+            if keys[pygame.K_SPACE]:
+                if self.can_attack:
+                    settings.player_attack.play().set_volume(0.5)
+                    self.is_attacking = True
+                    self.can_attack = False
+                    pygame.time.set_timer(self.attacking_timer, self.attack_duration)
+                    pygame.time.set_timer(self.attack_delay_timer, self.attack_delay)
+            if keys[pygame.K_LSHIFT]:
+                if self.can_super_attack and self.hitbox_sprite.rect.bottom == settings.floor:
+                    settings.player_heavy_attack.play()
+                    self.charged_group.empty()
+                    self.super_attack_charge = 0
+                    self.can_super_attack = False
+                    self.is_super_attacking = True
+                    self.go_invulnerable()
     
     def reset(self):
         """Reset player when game's over"""
@@ -239,10 +254,12 @@ class Player(pygame.sprite.Sprite):
         self.charged_group.empty()
         self.heart_group.remove(self.blood)
         self.frame_index = 0
+        self.animation_speed = 0.3
         self.status = "Stand"
         self.hitbox.sprite.rect.midbottom = (settings.screen_width/2, settings.floor)
     
     def go_invulnerable(self):
+        settings.shield.play().get_busy()
         self.shield.add(self.shield_sprite)
         self.is_invulnerable = True
         pygame.time.set_timer(self.invulnerability_timer, self.invulnerability_duration)
@@ -253,7 +270,8 @@ class Player(pygame.sprite.Sprite):
         self.shield.draw(screen)
         self.super_shockwave()
         self.super_group.draw(screen)
-        self.charged_group.draw(screen)
+        if self.status != "Death":
+            self.charged_group.draw(screen)
         self.heart_group.draw(screen)
         
         self.user_inputs()

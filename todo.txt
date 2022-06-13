@@ -1,19 +1,13 @@
-## Refactor / Better names
+## Refactor
+    # Clean up code
+    # Better names
+    # Inheritance
     
 ## Better Intro and gameover screen
-    # A kind of lore like "You were ambushed! Survive as long as you can!!!"
-    # background
-    # better instructions:
-        - Multiline
-        - Controls
-        - Press Return to start or try again when game's over
-
-## Death animation for player
+    # background ?
 
 ## Super attack
     # Bug: when shockwave touch a mob going in the same way as it, 
         the mob still go back istead of follow the wave
 
 ## Resolve "libpng warning: iCCP: known incorrect sRGB profile" warning
-
-## Sounds effects and music

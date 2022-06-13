@@ -27,6 +27,7 @@ class Settings:
         self.player_hit = pygame.mixer.Sound("sounds/audio_effects/Knight/hit.wav")
         self.player_jump = pygame.mixer.Sound("sounds/audio_effects/Knight/jump.wav")
         self.shockwave = pygame.mixer.Sound("sounds/audio_effects/shockwave.wav")
+        self.shield = pygame.mixer.Sound("sounds/audio_effects/shield.wav")
         self.mob_hit = pygame.mixer.Sound("sounds/audio_effects/Mob/hit.wav")
         self.mob_death = pygame.mixer.Sound("sounds/audio_effects/Mob/death.wav")
         
@@ -36,6 +37,5 @@ class Settings:
             
     def reset(self):
         self.difficulty = settings.start_difficulty
-        self.game_active =  False
         
 settings = Settings()

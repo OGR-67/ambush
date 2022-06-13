@@ -16,9 +16,13 @@ def check_player_collision():
                     player.hp -= 1
                     if player.hp == 0:
                         settings.player_death.play().set_volume(0.5)
+                        player.frame_index = 0
+                        player.status = "Death"
+                        player.animation_speed = 0.1
+                        
                         mob_hitbox_group.empty()
                         mob_group.empty()
-                        player.reset()
+                        
                         settings.reset()
                         score.reset_score()
                         score.check_best_score()
@@ -40,13 +44,30 @@ def draw_intro_screen(screen):
     screen.blit(avatar_surf, avatar_rect)
     # Instructions / Score
     font_size = 40
+    color = "#1d1f1f"
     font = pygame.font.Font("alagard.ttf", font_size)
     if settings.game_started:
-        instructions = f"Your score:  {score.user_score}"
+        best_score_str = f"Best score:  {score.best_score}"
+        score_str = f"Your score:  {score.user_score}"
+        best_score_surf = pygame.font.Font.render(font, best_score_str, False, color)
+        best_score_rect = best_score_surf.get_rect(topleft=(20, 60))
+        screen.blit(best_score_surf, best_score_rect)
+        score_surf = pygame.font.Font.render(font, score_str, False, color)
+        score_rect = score_surf.get_rect(topleft=(20, 120))
+        screen.blit(score_surf, score_rect)
     else:
-        instructions = "Hit Return to start"
-    instructions_center_pos = (300, settings.screen_height/2)
-    instructions_surf = pygame.font.Font.render(font, instructions, False, "black")
-    instructions_rect = instructions_surf.get_rect(center=instructions_center_pos)
-    screen.blit(instructions_surf, instructions_rect)
+        title_str = "You are ambushed!!!"
+        title_surf = pygame.font.Font.render(font, title_str, False, color)
+        title_rect = title_surf.get_rect(midtop=(settings.screen_width/2, 20))
+        screen.blit(title_surf, title_rect)
+        controls = ["Left / Right: Arrows", "Jump: up arrow", "Super Attack: left shift"]
+        for index, control in enumerate(controls):
+            surf = pygame.font.Font.render(font, control, False, color)
+            y_pos = 120 + 60 * index 
+            rect = surf.get_rect(topleft=(20, y_pos))
+            screen.blit(surf, rect)
+    start_str = "Hit Return to start"
+    start_surf = pygame.font.Font.render(font, start_str, False, color)
+    start_rect = start_surf.get_rect(midtop=(settings.screen_width/2, 320))
+    screen.blit(start_surf, start_rect)
     
