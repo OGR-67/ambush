@@ -1,27 +1,19 @@
-import pygame
-from support import import_folder
+from utility_classes import AnimatedSprite
 
-class Shield(pygame.sprite.Sprite):
+
+class Shield(AnimatedSprite):
+    """Shield class is a simple animated class that represents
+    a shield. This is used for feedback of invulnerability frames"""
     def __init__(self, player):
-        super().__init__()
+        """Takes player argument for placement on the player sprite."""
+        super().__init__("Shield", "graphics/", None)
         self.player = player
         self.frame_index = 0
-        self.frames = self.import_shield_assets()
-        self.image = self.frames[self.frame_index]
         self.rect = self.image.get_rect(center=self.player.rect.center)
         self.animation_speed = 1
     
-    def import_shield_assets(self):
-        path = "graphics/Shield"
-        return import_folder(path, "Shield")
-    
-    def animate(self):
-        self.frame_index += self.animation_speed
-        if self.frame_index >= len(self.frames):
-            self.frame_index = 0
-        self.image = self.frames[int(self.frame_index)]
-    
     def stick_to_char(self):
+        """Stick sprite on player spite"""
         self.rect = self.image.get_rect(center=self.player.rect.center)
     
     def update(self):

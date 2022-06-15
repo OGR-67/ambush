@@ -1,7 +1,7 @@
 ## Refactor
-    # Clean up code
+    # Clean up game over code
     # Better names
-    # Inheritance
+    # Some attributes better in hitbox?
     
 ## Better Intro and gameover screen
     # background ?

@@ -1,5 +1,6 @@
 import pygame
 from support import import_folder
+from sprite_group import groups
 
 class Heart(pygame.sprite.Sprite):
     def __init__(self):
@@ -17,4 +18,4 @@ class Heart(pygame.sprite.Sprite):
 
 
 heart = Heart()
-    
+groups["heart"].add(heart)
