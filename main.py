@@ -1,9 +1,12 @@
-import pygame
+"""
+Main program module. This is the program you whant to run.
+"""
+
 import sys
 from random import randint
+import pygame
 
 from settings import settings
-from support import cursor
 from score import score
 from sprite_group import groups
 from player import player
@@ -42,9 +45,10 @@ while True:
             if event.type == settings.spawn_timer:
                 if player.status != "Death":
                     Mob()
-                    pygame.time.set_timer(settings.spawn_timer, 
-                                          randint(settings.difficulty, 
-                                                  settings.difficulty + 500))
+                    pygame.time.set_timer(
+                        settings.spawn_timer,
+                        randint(settings.difficulty, settings.difficulty + 500)
+                        )
 
     if settings.game_active:
         # background

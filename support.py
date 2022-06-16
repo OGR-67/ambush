@@ -1,6 +1,12 @@
-import pygame
-from os import walk
+"""
+This module have some useful custom functions.
+- import_folder(path, asset)
+- transform_image(image_surf, asset)
+- cursor(screen, color, rect)
+"""
 
+from os import walk
+import pygame
 
 def import_folder(path, asset):
     """Return a list of all assets from a folder. Two parameters:
@@ -45,10 +51,12 @@ def transform_image(image_surf, asset):
 
 def cursor(screen, color, rect):
     """
-    A helper function to draw a cursor on a given screen with a given color of a given rect.
+    A helper function to draw a cursor on a given screen with
+    a given color of a given rect.
     - screen: the display surface to draw on
     - color: color code
     - rect: rect object to highlight
     """
-    cursor = pygame.Rect(rect.left,rect.top, rect.width, rect.height)
-    pygame.draw.rect(screen, color, cursor, 3)
+    cursor_rect = pygame.Rect(rect.left,rect.top, rect.width, rect.height)
+    cursor_width = 3
+    pygame.draw.rect(screen, color, cursor_rect, cursor_width)

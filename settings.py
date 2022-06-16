@@ -1,6 +1,6 @@
-import pygame
 from random import randint
 from os import walk
+import pygame
 
 
 class Settings:
@@ -48,15 +48,24 @@ class Settings:
         self.score_position_coordinates = (550, 50)
         # Sounds
         self.player_sounds = self.import_warrior_sound_effects()
-        self.player_attack = pygame.mixer.Sound("sounds/audio_effects/Knight/attack.wav")
-        self.player_death = pygame.mixer.Sound("sounds/audio_effects/Knight/death.wav")
-        self.player_heavy_attack = pygame.mixer.Sound("sounds/audio_effects/Knight/heavyattack.wav")
-        self.player_hit = pygame.mixer.Sound("sounds/audio_effects/Knight/hit.wav")
-        self.player_jump = pygame.mixer.Sound("sounds/audio_effects/Knight/jump.wav")
-        self.shockwave = pygame.mixer.Sound("sounds/audio_effects/shockwave.wav")
-        self.shield = pygame.mixer.Sound("sounds/audio_effects/shield.wav")
-        self.mob_hit = pygame.mixer.Sound("sounds/audio_effects/Mob/hit.wav")
-        self.mob_death = pygame.mixer.Sound("sounds/audio_effects/Mob/death.wav")
+        self.player_attack = pygame.mixer.Sound(
+            "sounds/audio_effects/Knight/attack.wav")
+        self.player_death = pygame.mixer.Sound(
+            "sounds/audio_effects/Knight/death.wav")
+        self.player_heavy_attack = pygame.mixer.Sound(
+            "sounds/audio_effects/Knight/heavyattack.wav")
+        self.player_hit = pygame.mixer.Sound(
+            "sounds/audio_effects/Knight/hit.wav")
+        self.player_jump = pygame.mixer.Sound(
+            "sounds/audio_effects/Knight/jump.wav")
+        self.shockwave = pygame.mixer.Sound(
+            "sounds/audio_effects/shockwave.wav")
+        self.shield = pygame.mixer.Sound(
+            "sounds/audio_effects/shield.wav")
+        self.mob_hit = pygame.mixer.Sound(
+            "sounds/audio_effects/Mob/hit.wav")
+        self.mob_death = pygame.mixer.Sound(
+            "sounds/audio_effects/Mob/death.wav")
         # Timers
         self.player_attacking_timer = pygame.USEREVENT + 1
         self.player_attack_delay_timer = pygame.USEREVENT + 2
@@ -105,7 +114,7 @@ class Settings:
         """Import sounds effects."""
         effects = {"attack": [], "heavyattack": [], "hit": [], "jump": [], "death": []}
         path = "sounds/characters_soud_effects/Knight/"
-        for effect in effects.keys():
+        for effect in effects:
             sound_object_list = []
             fullpath = path + effect
             for _, __, files in walk(fullpath):
@@ -115,8 +124,8 @@ class Settings:
                 effects[effect] = sound_object_list
         return effects
 
-    def import_mobs_sound_effects(self):
-        """Import sounds effects."""
-        pass
+    # def import_mobs_sound_effects(self):
+    #     """Import sounds effects."""
+    #     pass
 
 settings = Settings()

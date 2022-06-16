@@ -1,5 +1,5 @@
-import pygame
 from random import choice
+import pygame
 
 from sprite_group import groups
 from settings import settings
@@ -24,26 +24,26 @@ class Player(AnimatedSprite):
         self.direction_right = True
         super().__init__("Knight", "graphics", knight_animations_dict)
         self.animation_speed = 0.3
-        
+
         # Player
         self.hitbox = HitboxSprite(settings.player_hitbox_size)
         self.hitbox.rect.midbottom = settings.player_starting_point_coods
         groups["player_hitbox"].add(self.hitbox)
         groups["player"].add(self)
-        
+
         # Hit sprite
         self.hit = HitSprite()
-        
+
         # Attribute
         self.speed = 4
         self.jump_speed = -16
         self.hp = 3
-        
+
         # Attack
         self.can_attack = True
         self.is_attacking = False
-        
-        # Super attack 
+
+        # Super attack
         self.super_attack_charge = 0
         self.can_super_attack = False
         self.is_super_attacking = False
@@ -67,7 +67,7 @@ class Player(AnimatedSprite):
         self.is_invulnerable = False
         self.is_dying = False
         self.shield = Shield(self.hitbox)
-        
+
         # Utility
         self.gravity = 0.8
         self.direction = pygame.Vector2(0,0)
@@ -76,6 +76,7 @@ class Player(AnimatedSprite):
         self.status = "Stand"
 
     def set_heart_frame_index(self):
+        """Set heart frame index based on player's hp."""
         heart.frame_index = 3 - self.hp
         if heart.frame_index == 2:
             groups["heart"].add(blood)
@@ -89,7 +90,7 @@ class Player(AnimatedSprite):
         self.super_attack_charge += settings.super_charge_speed
 
     def check_super_attack(self):
-        """If super attack is full charged, add charged_char and charged_bar to 
+        """If super attack is full charged, add charged_char and charged_bar to
         'charged' group and set can_super_attack to True"""
         if self.super_attack_charge >= settings.super_max_charge:
             self.super_attack_charge = settings.super_max_charge
@@ -97,13 +98,15 @@ class Player(AnimatedSprite):
             groups["charged"].add([self.charged_char, self.charged_bar])
 
     def get_charge_bar_color(self):
-        """return the color of the charge bar based on super_attack_charge value."""
+        """
+        Return the color of the charge bar based on super_attack_charge value.
+        """
         if self.super_attack_charge < 20: return "#fc3a3a"
-        elif self.super_attack_charge < 40: return "#eb7107"
-        elif self.super_attack_charge < 60: return "#cde630"
-        elif self.super_attack_charge < 80: return "#56f03e"
-        elif self.super_attack_charge < 100: return "#42ecf5"
-        else: return "#e6e6fc"
+        if self.super_attack_charge < 40: return "#eb7107"
+        if self.super_attack_charge < 60: return "#cde630"
+        if self.super_attack_charge < 80: return "#56f03e"
+        if self.super_attack_charge < 100: return "#42ecf5"
+        return "#e6e6fc"
 
     def draw_super_attack_charge(self):
         """Draw charge bar of super attack."""
@@ -116,23 +119,30 @@ class Player(AnimatedSprite):
         border_size = 2
         border_color = "black"
         pygame.draw.rect(
-            settings.screen, 
-            border_color, 
-            self.charge_border_rect, 
+            settings.screen,
+            border_color,
+            self.charge_border_rect,
             border_size
             )
 
     def super_shockwave(self):
-        """Create shockwave sprite, spawn it to the good side of the player 
+        """Create shockwave sprite, spawn it to the good side of the player
         and add it to the group"""
         if self.super_atack_shockwave:
             settings.shockwave.play()
-            super_attack = sp.SuperAttack(self.is_going_right, self.rect.bottomleft, self.rect.bottomright)
+            super_attack = sp.SuperAttack(
+                self.is_going_right,
+                self.rect.bottomleft,
+                self.rect.bottomright
+                )
             groups["super"].add(super_attack)
             self.super_atack_shockwave = False
 
     def stick_character_to_hitbox(self):
-        """Stick the character rect to the hitbox rect according to the player's direction"""
+        """
+        Stick the character rect to the hitbox rect according
+        to the player's direction
+        """
         self.animate_player()
         if self.status == "Death":
             self.rect.bottomright = self.hitbox.rect.center
@@ -151,16 +161,19 @@ class Player(AnimatedSprite):
         # Single frame
         if len(self.frames[self.status]) == 0: self.frame_index = 0
         # New status -> index to 0
-        elif self.status != ancient_status: self.frame_index = 0
+        elif self.status != ancient_status:
+            self.frame_index = 0
         # End and reset game when death animation ends
-        elif self.status == "Death" and self.frame_index >= len(self.frames[self.status]):
+        elif self.status == "Death" and \
+        self.frame_index >= len(self.frames[self.status]):
             self.status = "Stand"
             settings.game_active =  False
             score.reset_score()
             score.check_best_score()
             self.reset()
         # Basic animation
-        elif self.frame_index > len(self.frames[self.status]) or self.status != ancient_status:
+        elif self.frame_index > len(self.frames[self.status]) or \
+        self.status != ancient_status:
             self.frame_index = 0
             # Super attack case
             if self.is_super_attacking:
@@ -176,9 +189,9 @@ class Player(AnimatedSprite):
             self.status = "Attack_Extra"
         elif self.is_attacking:
             self.status = "Attack"
-        elif self.hitbox.rect.bottom != settings.floor: 
+        elif self.hitbox.rect.bottom != settings.floor:
             self.status = "Jump"
-        elif self.is_moving: 
+        elif self.is_moving:
             self.status = "Run"
         else: self.status = "Stand"
 
@@ -186,24 +199,22 @@ class Player(AnimatedSprite):
         '''Applies gravity to the player'''
         self.direction.y += self.gravity
         self.hitbox.rect.y += self.direction.y
-        if self.hitbox.rect.bottom >= settings.floor:
-            self.hitbox.rect.bottom = settings.floor
+        self.hitbox.rect.y = min(self.hitbox.rect.y, settings.floor)
+        self.hitbox.rect.bottom = min(self.hitbox.rect.bottom, settings.floor)
 
     def player_left(self):
         """Get the character moving left."""
         self.is_going_right = False
         self.is_moving = True
         self.hitbox.rect.x -= self.speed
-        if self.hitbox.rect.left < 0:
-            self.hitbox.rect.left = 0
+        self.hitbox.rect.x = max(self.hitbox.rect.x, 0)
 
     def player_right(self):
         """Get the character moving right."""
         self.is_going_right = True
         self.is_moving = True
         self.hitbox.rect.x += self.speed
-        if self.hitbox.rect.right > settings.screen_width:
-            self.hitbox.rect.right = settings.screen_width
+        self.hitbox.rect.x = min(self.hitbox.rect.x, settings.screen_width)
 
     def jump(self):
         """Get the character jumping."""
@@ -219,8 +230,8 @@ class Player(AnimatedSprite):
         self.is_attacking = True
         self.can_attack = False
         pygame.time.set_timer(
-            settings.player_attacking_timer, 
-            settings.attack_duration, 
+            settings.player_attacking_timer,
+            settings.attack_duration,
             )
         pygame.time.set_timer(
             settings.player_attack_delay_timer,
@@ -248,7 +259,8 @@ class Player(AnimatedSprite):
             if keys[pygame.K_SPACE]:
                 if self.can_attack: self.attack()
             if keys[pygame.K_LSHIFT]:
-                if self.can_super_attack and self.hitbox.rect.bottom == settings.floor:
+                if self.can_super_attack and \
+                    self.hitbox.rect.bottom == settings.floor:
                     self.super_attack()
 
     def reset(self):
@@ -264,7 +276,7 @@ class Player(AnimatedSprite):
         self.animation_speed = 0.3
         self.status = "Stand"
         self.hitbox.rect.midbottom = (
-            settings.screen_width / 2, 
+            settings.screen_width / 2,
             settings.floor
             )
 
@@ -308,7 +320,8 @@ class HitSprite(HitboxSprite):
         groups["hit"].add(self)
 
     def check_direction_and_status(self, player):
-        '''Place hit box according to player direction and if player is attacking'''
+        '''Place hit box according to player direction and
+        attacking status.'''
         if player.is_attacking:
             if player.is_going_right:
                 self.rect.bottomleft = player.hitbox.rect.bottomright
