@@ -11,11 +11,11 @@ class Shield(AnimatedSprite):
         self.frame_index = 0
         self.rect = self.image.get_rect(center=self.player.rect.center)
         self.animation_speed = 1
-    
+
     def stick_to_char(self):
         """Stick sprite on player spite"""
         self.rect = self.image.get_rect(center=self.player.rect.center)
-    
+
     def update(self):
         self.animate()
         self.stick_to_char()

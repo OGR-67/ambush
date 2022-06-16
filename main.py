@@ -16,7 +16,7 @@ settings.create_spawn_timer()
 
 background_rect, background_surf = settings.create_background()
 settings.play_background_music()
- 
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -49,26 +49,21 @@ while True:
     if settings.game_active:
         # background
         settings.screen.blit(background_surf, background_rect)
+
         # player and mobs
         groups["mobs"].draw(settings.screen)
         groups["player"].update()
         groups["mobs"].update()
+
         # score
         score.display_scores()
         settings.scale_difficulty()
- 
+
         # collisions
         game_over.check_player_collision()
-        
-        # Cursor #########################################
-        
-        # for sprite in groups["mobs"].sprites():
-        #     cursor(settings.screen, "red", sprite.rect)
-        # for sprite in groups["mobs_hitbox"].sprites():
-        #     cursor(settings.screen, "blue", sprite.rect) 
-    
-    else: 
+
+    else:
         game_over.draw_intro_screen()
-    
+
     pygame.display.update()
     clock.tick(60)

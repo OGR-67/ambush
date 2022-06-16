@@ -6,6 +6,8 @@
 ## Better Intro and gameover screen
     # background ?
 
+## Better sounds effects
+
 ## Super attack
     # Bug: when shockwave touch a mob going in the same way as it, 
         the mob still go back istead of follow the wave

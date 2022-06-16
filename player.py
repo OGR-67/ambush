@@ -74,7 +74,7 @@ class Player(AnimatedSprite):
         self.is_moving = False
         self.is_going_right = True
         self.status = "Stand"
-    
+
     def set_heart_frame_index(self):
         heart.frame_index = 3 - self.hp
         if heart.frame_index == 2:
@@ -83,11 +83,11 @@ class Player(AnimatedSprite):
             groups["heart"].remove(blood)
             heart.frame_index = 3
         heart.image = heart.frames[heart.frame_index]
-    
+
     def charge_super_attack(self):
         """Increment value of super attack charge"""
         self.super_attack_charge += settings.super_charge_speed
-        
+
     def check_super_attack(self):
         """If super attack is full charged, add charged_char and charged_bar to 
         'charged' group and set can_super_attack to True"""
@@ -95,7 +95,7 @@ class Player(AnimatedSprite):
             self.super_attack_charge = settings.super_max_charge
             self.can_super_attack = True
             groups["charged"].add([self.charged_char, self.charged_bar])
-    
+
     def get_charge_bar_color(self):
         """return the color of the charge bar based on super_attack_charge value."""
         if self.super_attack_charge < 20: return "#fc3a3a"
@@ -104,13 +104,13 @@ class Player(AnimatedSprite):
         elif self.super_attack_charge < 80: return "#56f03e"
         elif self.super_attack_charge < 100: return "#42ecf5"
         else: return "#e6e6fc"
-    
+
     def draw_super_attack_charge(self):
         """Draw charge bar of super attack."""
         self.charge_rect.width = self.super_attack_charge * 2
         color = self.get_charge_bar_color()
         pygame.draw.rect(settings.screen, color, self.charge_rect)
-    
+
     def draw_super_attack_charge_border(self):
         """Draw the border of the super attack charge bar."""
         border_size = 2
@@ -121,7 +121,7 @@ class Player(AnimatedSprite):
             self.charge_border_rect, 
             border_size
             )
-            
+
     def super_shockwave(self):
         """Create shockwave sprite, spawn it to the good side of the player 
         and add it to the group"""
@@ -142,7 +142,7 @@ class Player(AnimatedSprite):
             else:
                 self.image = pygame.transform.flip(self.image, True, False)
                 self.rect.midbottom = self.hitbox.rect.bottomleft
-    
+
     def animate_player(self):
         '''Animate player'''
         ancient_status = self.status
@@ -168,7 +168,7 @@ class Player(AnimatedSprite):
                 self.super_atack_shockwave = True
         # set image
         self.image = self.frames[self.status][int(self.frame_index)]
-        
+
     def get_status(self):
         """Get the good status according to character situation."""
         if self.status == "Death": pass
@@ -188,7 +188,7 @@ class Player(AnimatedSprite):
         self.hitbox.rect.y += self.direction.y
         if self.hitbox.rect.bottom >= settings.floor:
             self.hitbox.rect.bottom = settings.floor
-    
+
     def player_left(self):
         """Get the character moving left."""
         self.is_going_right = False
@@ -196,7 +196,7 @@ class Player(AnimatedSprite):
         self.hitbox.rect.x -= self.speed
         if self.hitbox.rect.left < 0:
             self.hitbox.rect.left = 0
-    
+
     def player_right(self):
         """Get the character moving right."""
         self.is_going_right = True
@@ -204,17 +204,15 @@ class Player(AnimatedSprite):
         self.hitbox.rect.x += self.speed
         if self.hitbox.rect.right > settings.screen_width:
             self.hitbox.rect.right = settings.screen_width
-    
+
     def jump(self):
         """Get the character jumping."""
         settings.player_jump.play()
         self.direction.y = self.jump_speed
         self.is_moving = False
-        
+
     def attack(self):
         """Get the character attacking."""
-        # settings.player_attack.set_volume(0.5)
-        # settings.player_attack.play()
         sound = choice(settings.player_sounds["attack"])
         sound.set_volume(0.5)
         sound.play()
@@ -228,7 +226,7 @@ class Player(AnimatedSprite):
             settings.player_attack_delay_timer,
             settings.attack_delay
             )
-        
+
     def super_attack(self):
         """Get the character super attacking."""
         settings.player_heavy_attack.play()
@@ -237,7 +235,7 @@ class Player(AnimatedSprite):
         self.can_super_attack = False
         self.is_super_attacking = True
         self.go_invulnerable()
-    
+
     def user_inputs(self):
         '''Checks user's inputs and acts in consequence'''
         self.is_moving = False
@@ -252,7 +250,7 @@ class Player(AnimatedSprite):
             if keys[pygame.K_LSHIFT]:
                 if self.can_super_attack and self.hitbox.rect.bottom == settings.floor:
                     self.super_attack()
-    
+
     def reset(self):
         """Reset player when game's over"""
         self.is_dying = False
@@ -269,7 +267,7 @@ class Player(AnimatedSprite):
             settings.screen_width / 2, 
             settings.floor
             )
-    
+
     def go_invulnerable(self):
         """Go invulnerable for some frames whith a shield as feedback"""
         settings.shield.play()
@@ -279,7 +277,7 @@ class Player(AnimatedSprite):
             settings.player_invulnerability_timer,
             settings.invulnerability_duration
             )
-    
+
     def update(self):
         screen = settings.screen
         self.user_inputs()

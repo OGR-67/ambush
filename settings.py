@@ -13,6 +13,8 @@ class Settings:
         self.screen = pygame.display.set_mode(self.get_screen_size())
         # font
         self.font = pygame.font.Font("alagard.ttf", 25)
+        self.intro_font = pygame.font.Font("alagard.ttf", 40)
+        self.intro_color = "#1d1f1f"
         # floor
         self.floor = 300
         # game state
@@ -98,7 +100,7 @@ class Settings:
     def create_spawn_timer(self):
         """Set mobs spawn timer."""
         pygame.time.set_timer(self.spawn_timer, randint(1000, 1500))
-        
+
     def import_warrior_sound_effects(self):
         """Import sounds effects."""
         effects = {"attack": [], "heavyattack": [], "hit": [], "jump": [], "death": []}
@@ -112,9 +114,9 @@ class Settings:
                     sound_object_list.append(sound_object)
                 effects[effect] = sound_object_list
         return effects
-        
+
     def import_mobs_sound_effects(self):
         """Import sounds effects."""
         pass
-        
+
 settings = Settings()

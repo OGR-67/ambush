@@ -25,7 +25,7 @@ class Mob(utility_classes.AnimatedSprite):
         
         self.ancient_status = self.status
         self.is_invincible = False
-        
+
     def spawn(self):
         """Set position and size of hitbox. Set speed of mob.
         Add mob to mobs group, hitbox to mobs_hitbox group'"""
@@ -49,13 +49,13 @@ class Mob(utility_classes.AnimatedSprite):
         else: self.hitbox.rect.midbottom = (30, rect_bottom)
         groups["mobs"].add(self)
         groups["mobs_hitbox"].add(self.hitbox)
-    
+
     def check_status_change(self):
         """Check any changement of status.
         Set frame_index to 0 if any"""
         if self.status != self.ancient_status:
             self.frame_index = 0
-    
+
     def stick_asset_to_hibox(self):
         """Stick asset to the hitbox"""
         match self.type:
@@ -70,12 +70,12 @@ class Mob(utility_classes.AnimatedSprite):
                 shift_x = 0 * self.spawn_choice
         self.rect.centerx = self.hitbox.rect.centerx + shift_x
         self.rect.centery = self.hitbox.rect.top + shift_y
-    
+
     def move(self):
         """Move hitbox."""
         if self.is_invincible: self.hurt()
         else: self.hitbox.rect.x += self.speed * self.spawn_choice
-        
+
     def hurt(self):
         """Hurt movement logic"""
         offset_x = 30 * self.spawn_choice
@@ -84,14 +84,14 @@ class Mob(utility_classes.AnimatedSprite):
         if self.hitbox.rect.x == self.hitbox.start_point_x - offset_x:
             self.is_invincible = False
             self.status = "Walk"
-    
+
     def kill_out_of_screen(self):
         """Kill sprite and its hitbox when out of screen."""
         if self.hitbox.rect.right <= -50 or \
         self.hitbox.rect.left >= settings.screen_width + 50:
             self.kill()
             self.hitbox.kill()
-    
+
     def mobs_collisions(self, group):
         """Check collision between mobs and specified group."""
         mob_collided_hitbox = pygame.sprite.groupcollide(groups["mobs_hitbox"], group,False, False)
@@ -113,8 +113,13 @@ class Mob(utility_classes.AnimatedSprite):
                             settings.mob_death.play()
                     self.is_invincible = True
                     self.hitbox.start_point_x = mob_hitbox.rect.x
-    
+
     def death_animate(self):
+        """
+        Animation for dying mob. When animation ends:
+        - kill hitbox
+        - kill sprite
+        """
         image_to_animate = self.frames["Death"]
         self.frame_index += self.animation_speed
         index = floor(self.frame_index) 
@@ -123,12 +128,13 @@ class Mob(utility_classes.AnimatedSprite):
             self.hitbox.kill()
             self.kill()
         self.image = image_to_animate[index]
-        
+
     def clear_if_dead(self):
+        """Delete hitbox and sprite when in no group."""
         if not self.groups():
             del self.hitbox
             del self
-      
+
     def update(self):
         screen = settings.screen
         self.check_status_change()
