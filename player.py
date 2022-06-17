@@ -218,7 +218,7 @@ class Player(AnimatedSprite):
 
     def jump(self):
         """Get the character jumping."""
-        settings.player_jump.play()
+        choice(settings.player_sounds["jump"]).play()
         self.direction.y = self.jump_speed
         self.is_moving = False
 
@@ -240,7 +240,7 @@ class Player(AnimatedSprite):
 
     def super_attack(self):
         """Get the character super attacking."""
-        settings.player_heavy_attack.play()
+        choice(settings.player_sounds["heavyattack"]).play()
         groups["charged"].empty()
         self.super_attack_charge = 0
         self.can_super_attack = False

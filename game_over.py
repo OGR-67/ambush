@@ -1,3 +1,4 @@
+from random import choice
 import pygame
 
 from settings import settings
@@ -22,7 +23,7 @@ def check_player_collision():
                         if player.hp == 0:
                             player_dead()
                         else:
-                            settings.player_hit.play()
+                            choice(settings.player_sounds["hit"]).play()
                             player.go_invulnerable()
 
 def player_dead():
@@ -33,7 +34,7 @@ def player_dead():
     - Set is_dying to True.
     - Slow down animation speed
     """
-    settings.player_death.play().set_volume(0.5)
+    choice(settings.player_sounds["death"]).play().set_volume(0.5)
     player.frame_index = 0
     player.status = "Death"
     player.is_dying = True
