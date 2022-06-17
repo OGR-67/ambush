@@ -47,7 +47,7 @@ class Settings:
         self.user_score = 0
         self.score_position_coordinates = (550, 50)
         # Sounds
-        self.player_sounds = self.import_warrior_sound_effects()
+        self.player_sounds = self.import_sound_effects("Knight")
         self.player_attack = pygame.mixer.Sound(
             "sounds/audio_effects/Knight/attack.wav")
         self.player_death = pygame.mixer.Sound(
@@ -62,6 +62,7 @@ class Settings:
             "sounds/audio_effects/shockwave.wav")
         self.shield = pygame.mixer.Sound(
             "sounds/audio_effects/shield.wav")
+        self.mob_sounds = self.import_sound_effects("Mob")
         self.mob_hit = pygame.mixer.Sound(
             "sounds/audio_effects/Mob/hit.wav")
         self.mob_death = pygame.mixer.Sound(
@@ -110,10 +111,10 @@ class Settings:
         """Set mobs spawn timer."""
         pygame.time.set_timer(self.spawn_timer, randint(1000, 1500))
 
-    def import_warrior_sound_effects(self):
+    def import_sound_effects(self, character):
         """Import sounds effects."""
         effects = {"attack": [], "heavyattack": [], "hit": [], "jump": [], "death": []}
-        path = "sounds/characters_soud_effects/Knight/"
+        path = f"sounds/characters_soud_effects/{character}/"
         for effect in effects:
             sound_object_list = []
             fullpath = path + effect
@@ -124,8 +125,18 @@ class Settings:
                 effects[effect] = sound_object_list
         return effects
 
-    # def import_mobs_sound_effects(self):
-    #     """Import sounds effects."""
-    #     pass
+    def import_mobs_sound_effects(self):
+        """Import sounds effects."""
+        effects = {"hit": [], "death": []}
+        path = "sounds/characters_soud_effects/Mob/"
+        for effect in effects:
+            sound_object_list = []
+            fullpath = path + effect
+            for _, __, files in walk(fullpath):
+                for file in files:
+                    sound_object = pygame.mixer.Sound(f"{fullpath}/{file}")
+                    sound_object_list.append(sound_object)
+                effects[effect] = sound_object_list
+        return effects
 
 settings = Settings()

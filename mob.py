@@ -102,7 +102,8 @@ class Mob(utility_classes.AnimatedSprite):
                         self.frame_index = 0
                         self.hp -= 1
                         score.score += settings.points_on_death
-                        settings.mob_hit.play()
+                        choice(settings.mob_sounds["hit"]).play()
+                        # settings.mob_hit.play()
 
                         if self.hp == 0:
                             self.frame_index = 0
@@ -110,7 +111,8 @@ class Mob(utility_classes.AnimatedSprite):
                             def new_hurt(): pass
                             self.hurt = new_hurt
                             self.animate = self.death_animate
-                            settings.mob_death.play()
+                            # settings.mob_death.play()
+                            choice(settings.mob_sounds["death"]).play()
                     self.is_invincible = True
                     self.hitbox.start_point_x = mob_hitbox.rect.x
 

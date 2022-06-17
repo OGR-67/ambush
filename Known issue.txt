@@ -1,0 +1,3 @@
+## Super attack
+    # Bug: when shockwave touch a mob going in the same way as it, 
+        the mob still go back istead of follow the wave
