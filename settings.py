@@ -13,7 +13,7 @@ class Settings:
         self.screen = pygame.display.set_mode(self.get_screen_size())
         # font
         self.font = pygame.font.Font("alagard.ttf", 25)
-        self.intro_font = pygame.font.Font("alagard.ttf", 40)
+        self.intro_font = pygame.font.Font("alagard.ttf", 35)
         self.intro_color = "#1d1f1f"
         # floor
         self.floor = 300

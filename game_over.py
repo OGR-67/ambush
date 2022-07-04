@@ -98,7 +98,7 @@ def set_and_draw_intro_title():
 
 def set_and_draw_intro_controls():
     """Set and draw the controls on the intro screen."""
-    controls = ["Left / Right: Arrows", "Jump: up arrow", "Super Attack: left shift"]
+    controls = ["Left / Right: Arrows", "Jump: up arrow","Attack: Space bar", "Super Attack: left shift"]
     for index, control in enumerate(controls):
         surf = pygame.font.Font.render(
             settings.intro_font,
@@ -106,7 +106,7 @@ def set_and_draw_intro_controls():
             False,
             settings.intro_color
             )
-        y_pos = 120 + 60 * index 
+        y_pos = 80 + 60 * index 
         rect = surf.get_rect(topleft=(20, y_pos))
         settings.screen.blit(surf, rect)
 
