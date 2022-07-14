@@ -5,7 +5,7 @@ This module have some useful custom functions.
 - cursor(screen, color, rect)
 """
 
-from os import walk
+import os
 import pygame
 
 def import_folder(path, asset):
@@ -13,9 +13,9 @@ def import_folder(path, asset):
     - path: relative path to the folder
     - asset: name of the asset"""
     surface_list = []
-    for _, __, img_files in walk(path):
+    for _, __, img_files in os.walk(path):
         for image in sorted(img_files):
-            full_path = f"{path}/{image}"
+            full_path = os.path.join(os.getcwd(), f"{path}/{image}")
             image_surf = pygame.image.load(full_path).convert_alpha()
             image_surf = transform_image(image_surf, asset)
             surface_list.append(image_surf)

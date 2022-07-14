@@ -1,5 +1,5 @@
 from random import randint
-from os import walk
+import os
 import pygame
 
 
@@ -12,8 +12,8 @@ class Settings:
         self.screen_size = self.get_screen_size()
         self.screen = pygame.display.set_mode(self.get_screen_size())
         # font
-        self.font = pygame.font.Font("alagard.ttf", 25)
-        self.intro_font = pygame.font.Font("alagard.ttf", 35)
+        self.font = pygame.font.Font(os.path.join(os.getcwd(),"alagard.ttf"), 25)
+        self.intro_font = pygame.font.Font(os.path.join(os.getcwd(),"alagard.ttf"), 35)
         self.intro_color = "#1d1f1f"
         # floor
         self.floor = 300
@@ -49,9 +49,9 @@ class Settings:
         # Sounds
         self.player_sounds = self.import_sound_effects("Knight")
         self.shockwave = pygame.mixer.Sound(
-            "sounds/audio_effects/shockwave.wav")
+            os.path.join(os.getcwd(),"sounds/audio_effects/shockwave.wav"))
         self.shield = pygame.mixer.Sound(
-            "sounds/audio_effects/shield.wav")
+            os.path.join(os.getcwd(), "sounds/audio_effects/shield.wav"))
         self.mob_sounds = self.import_sound_effects("Mob")
         # Timers
         self.player_attacking_timer = pygame.USEREVENT + 1
@@ -82,14 +82,14 @@ class Settings:
 
     def create_background(self):
         """Return a tuple of background_rect and background_surf."""
-        background_image = pygame.image.load("graphics/Battleground.png").convert()
+        background_image = pygame.image.load(os.path.join(os.getcwd(), "graphics/Battleground.png")).convert()
         background_surf = pygame.transform.scale(background_image, (self.screen_width, self.screen_height))
         background_rect = background_surf.get_rect(topleft=(0,0))
         return background_rect, background_surf
 
     def play_background_music(self):
         """Load and play background music."""
-        pygame.mixer.music.load("sounds/background_music.mp3")
+        pygame.mixer.music.load(os.path.join(os.getcwd(), "sounds/background_music.mp3"))
         pygame.mixer.music.set_volume(0.3)
         pygame.mixer.music.play(-1)
 
@@ -100,11 +100,12 @@ class Settings:
     def import_sound_effects(self, character):
         """Import sounds effects."""
         effects = {"attack": [], "heavyattack": [], "hit": [], "jump": [], "death": []}
-        path = f"sounds/characters_soud_effects/{character}/"
+        # path = f"sounds/characters_soud_effects/{character}/"
+        path = os.path.join(os.getcwd(),f"sounds/characters_soud_effects/{character}") + "/"
         for effect in effects:
             sound_object_list = []
             fullpath = path + effect
-            for _, __, files in walk(fullpath):
+            for _, __, files in os.walk(fullpath):
                 for file in files:
                     sound_object = pygame.mixer.Sound(f"{fullpath}/{file}")
                     sound_object_list.append(sound_object)
