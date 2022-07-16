@@ -5,7 +5,7 @@ Main program module. This is the program you whant to run.
 import sys
 import os
 if getattr(sys, 'frozen', False):
-    os.chdir(os.path.dirname(sys.executable))
+    os.chdir(sys._MEIPASS)
 from random import randint
 import pygame
 
